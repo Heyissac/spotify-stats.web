@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas detalladas - {{ time_range_name }}</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 0; 
+            background: linear-gradient(135deg, #191414 0%, #1DB954 100%);
+            color: white; 
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+            margin-bottom: 40px;
+        }
+        .section { 
+            background-color: rgba(40, 40, 40, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .genre-bar {
+            background-color: rgba(29, 185, 84, 0.3);
+            margin: 8px 0;
+            padding: 8px 12px;
+            border-radius: 20px;
+            position: relative;
+        }
+        .genre-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #1DB954;
+            border-radius: 20px;
+            z-index: -1;
+        }
+        .track, .artist { 
+            margin: 12px 0; 
+            padding: 12px; 
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .track img, .artist img { 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 6px; 
+            margin-right: 12px;
+        }
+        h1, h2 { color: #1DB954; }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background-color: #1DB954;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { background-color: #1ed760; }
+        .btn.active { background-color: #1ed760; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Estadísticas de {{ time_range_name }}</h1>
+            <p>Análisis detallado de tu música favorita</p>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="/stats/short_term" class="btn {% if time_range == 'short_term' %}active{% endif %}">4 semanas</a>
+            <a href="/stats/medium_term" class="btn {% if time_range == 'medium_term' %}active{% endif %}">6 meses</a>
+            <a href="/stats/long_term" class="btn {% if time_range == 'long_term' %}active{% endif %}">Histórico</a>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="section">
+                <h2>🎵 Top 10 Canciones</h2>
+                {% for track in top_tracks[:10] %}
+                <div class="track">
+                    <img src="{{ track.album.images[-1].url if track.album.images else '' }}" alt="Album">
+                    <div>
+                        <strong>{{ loop.index }}. {{ track.name }}</strong><br>
+                        <small style="color: #b3b3b3;">{{ track.artists[0].name }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="section">
+                <h2>🎤 Top 10 Artistas</h2>
+                {% for artist in top_artists[:10] %}
+                <div class="artist">
+                    <img src="{{ artist.images[-1].url if artist.images else '' }}" alt="Artist">
+                    <div>
+                        <strong>{{ loop.index }}. {{ artist.name }}</strong><br>
+                        <small style="color: #1DB954;">{{ artist.popularity }}/100</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="section">
+                <h2>🎼 Tus géneros favoritos</h2>
+                {% for genre, count in top_genres %}
+                <div class="genre-bar">
+                    <div class="genre-fill" style="width: {{ (count / top_genres[0][1] * 100) if top_genres else 0 }}%;"></div>
+                    <strong>{{ genre.title() }}</strong> <span style="float: right;">{{ count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/profile" class="btn">← Volver al resumen</a>
+            <a href="/logout" class="btn" style="background-color: #e22134;">🚪 Cerrar sesión</a>
+        </div>
+    </div>
+</body>
+</html>
