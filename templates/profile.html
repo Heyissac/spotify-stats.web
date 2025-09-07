@@ -1,134 +1,293 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tus Estadísticas de Spotify</title>
-    <style>
-        body { 
-            font-family: 'Arial', sans-serif; 
-            margin: 0; 
-            background: linear-gradient(135deg, #191414 0%, #1DB954 100%);
-            color: white; 
-            min-height: 100vh;
+    <title>{{ user.display_name }} - Tus Estadísticas de Spotify</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'spotify-green': '#1DB954',
+                        'spotify-green-light': '#1ed760',
+                        'spotify-black': '#191414',
+                        'spotify-dark': '#121212',
+                        'spotify-gray': '#282828',
+                    }
+                }
+            }
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .nav-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .btn {
-            background-color: #1DB954;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            background-color: #1ed760;
-            transform: translateY(-2px);
-        }
-        .section { 
-            margin: 30px 0; 
-            background-color: rgba(40, 40, 40, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-        }
-        .track, .artist { 
-            margin: 15px 0; 
-            padding: 15px; 
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            transition: transform 0.2s ease;
-        }
-        .track:hover, .artist:hover {
-            transform: translateX(5px);
-        }
-        .track img, .artist img { 
-            width: 60px; 
-            height: 60px; 
-            border-radius: 8px; 
-            margin-right: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        h1, h2 { color: #1DB954; margin-bottom: 10px; }
-        .user-info {
-            background-color: rgba(29, 185, 84, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-    </style>
+    </script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🎵 ¡Hola, {{ user.display_name }}!</h1>
-            <div class="user-info">
-                <p><strong>Seguidores:</strong> {{ user.followers.total }} | <strong>País:</strong> {{ user.country }}</p>
-            </div>
-        </div>
-        
-        <div class="nav-buttons">
-            <a href="/stats/short_term" class="btn">📊 Últimas 4 semanas</a>
-            <a href="/stats/medium_term" class="btn">📈 Últimos 6 meses</a>
-            <a href="/stats/long_term" class="btn">📉 Histórico completo</a>
-            <a href="/logout" class="btn" style="background-color: #e22134;">🚪 Cerrar sesión</a>
-        </div>
-        
-        <div class="section">
-            <h2>🔥 Tus canciones más escuchadas (últimos 6 meses)</h2>
-            {% for track in top_tracks %}
-            <div class="track">
-                <img src="{{ track.album.images[0].url if track.album.images else '' }}" alt="Album">
-                <div>
-                    <strong>{{ track.name }}</strong><br>
-                    <span style="color: #b3b3b3;">{{ track.artists[0].name }}</span><br>
-                    <small style="color: #1DB954;">Popularidad: {{ track.popularity }}/100</small>
+
+<body class="bg-gradient-to-br from-spotify-black via-gray-900 to-spotify-gray min-h-screen font-sans">
+
+    <!-- Header con información del usuario -->
+    <div
+        class="relative overflow-hidden bg-gradient-to-r from-spotify-green/20 via-green-600/20 to-emerald-500/20 backdrop-blur-sm border-b border-white/10">
+        <!-- Efectos decorativos de fondo -->
+        <div class="absolute inset-0 bg-gradient-to-r from-spotify-green/5 to-transparent"></div>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-spotify-green/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-green-400/10 rounded-full blur-2xl"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6 py-12">
+            <!-- Perfil del usuario -->
+            <div class="text-center space-y-6">
+                <!-- Avatar y saludo -->
+                <div class="flex flex-col items-center space-y-4">
+                    {% if user.images %}
+                    <img src="{{ user.images[0].url }}" alt="Foto de perfil de {{ user.display_name }}"
+                        class="w-32 h-32 rounded-full mb-4 shadow-xl border-3 border-white object-cover ring-4 ring-spotify-green ring-opacity-50 hover:ring-opacity-100 transition-all duration-300">
+                    {% else %}
+                    <div
+                        class="w-24 h-24 bg-gradient-to-br from-spotify-green to-spotify-green-light rounded-full flex items-center justify-center mb-4 shadow-xl border-3 border-white ring-4 ring-spotify-green ring-opacity-50">
+                        <i class="fas fa-user text-3xl text-white"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h1
+                            class="p-4 text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-green-100">
+                            ¡Hola, {{ user.display_name }}! 🎵
+                        </h1>
+                        <p class="text-xl md:text-2xl text-green-100 font-light mt-2">
+                            Tu universo musical te espera
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Stats del usuario -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-8 mt-8">
+                    <div
+                        class="bg-white/10 backdrop-blur-md rounded-2xl px-6 py-4 border border-white/20 hover:bg-white/15 transition-all duration-300">
+                        <div class="text-center">
+                            <i class="fas fa-users text-spotify-green text-2xl mb-2"></i>
+                            <p class="text-2xl font-bold text-white">{{ user.followers.total }}</p>
+                            <p class="text-sm text-gray-300">Seguidores</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        
-        <div class="section">
-            <h2>🎤 Tus artistas favoritos (últimos 6 meses)</h2>
-            {% for artist in top_artists %}
-            <div class="artist">
-                <img src="{{ artist.images[0].url if artist.images else '' }}" alt="Artist">
-                <div>
-                    <strong>{{ artist.name }}</strong><br>
-                    <small style="color: #b3b3b3;">{{ artist.genres|join(', ') if artist.genres else 'Sin géneros' }}</small><br>
-                    <small style="color: #1DB954;">Popularidad: {{ artist.popularity }}/100</small>
+    </div>
+
+    <!-- Navegación de períodos -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <h2 class="text-xl font-semibold text-gray-300 mb-4 sm:mb-0">Explora por periodo:</h2>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="/stats/short_term"
+                    class="group bg-white/5 hover:bg-spotify-green/20 border border-white/10 hover:border-spotify-green/50 rounded-full px-6 py-3 text-white hover:text-green-100 font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-spotify-green/20">
+                    <i class="fas fa-calendar-day mr-2 group-hover:text-spotify-green"></i>
+                    Últimas 4 semanas
+                </a>
+                <a href="/stats/medium_term"
+                    class="group bg-white/5 hover:bg-spotify-green/20 border border-white/10 hover:border-spotify-green/50 rounded-full px-6 py-3 text-white hover:text-green-100 font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-spotify-green/20">
+                    <i class="fas fa-calendar-alt mr-2 group-hover:text-spotify-green"></i>
+                    Últimos 6 meses
+                </a>
+                <a href="/stats/long_term"
+                    class="group bg-white/5 hover:bg-spotify-green/20 border border-white/10 hover:border-spotify-green/50 rounded-full px-6 py-3 text-white hover:text-green-100 font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-spotify-green/20">
+                    <i class="fas fa-history mr-2 group-hover:text-spotify-green"></i>
+                    Histórico completo
+                </a>
+            </div>
+        </div>
+
+        <!-- Botón de logout -->
+        <div class="flex justify-center mb-12">
+            <a href="/logout"
+                class="group bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 hover:border-red-500/50 rounded-full px-6 py-3 text-red-300 hover:text-red-200 font-medium transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Cerrar sesión
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="max-w-6xl mx-auto px-6 pb-12">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+            <!-- Top Canciones -->
+            <div class="xl:col-span-1">
+                <div
+                    class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full hover:bg-white/8 transition-all duration-500">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2
+                            class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-spotify-green to-green-400">
+                            🔥 Tus hits favoritos
+                        </h2>
+                        <div class="w-2 h-2 bg-spotify-green rounded-full animate-pulse"></div>
+                    </div>
+
+                    <div
+                        class="space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-spotify-green/50 scrollbar-track-transparent">
+                        {% for track in top_tracks %}
+                        <div
+                            class="group flex items-center space-x-4 p-4 rounded-2xl hover:bg-white/10 transition-all duration-300 cursor-pointer">
+                            <!-- Imagen del álbum -->
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ track.album.images[0].url if track.album.images else '/static/default-album.png' }}"
+                                    alt="{{ track.name }}"
+                                    class="w-16 h-16 rounded-xl shadow-lg group-hover:shadow-spotify-green/30 transition-all duration-300">
+                                <div
+                                    class="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                                    <i
+                                        class="fas fa-play text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                                </div>
+                            </div>
+
+                            <!-- Info de la canción -->
+                            <div class="flex-1 min-w-0">
+                                <h3
+                                    class="font-semibold text-white group-hover:text-green-100 transition-colors duration-300 truncate">
+                                    {{ track.name }}
+                                </h3>
+                                <p
+                                    class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300 truncate">
+                                    {{ track.artists[0].name }}
+                                </p>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <div class="flex items-center space-x-1">
+                                        {% for i in range(5) %}
+                                        {% if (track.popularity / 20) > i %}
+                                        <i class="fas fa-star text-spotify-green text-xs"></i>
+                                        {% else %}
+                                        <i class="far fa-star text-gray-500 text-xs"></i>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <span class="text-xs text-spotify-green font-medium">{{ track.popularity
+                                        }}/100</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-        
-        <div class="section">
-            <h2>🕐 Escuchado recientemente</h2>
-            {% for item in recent_tracks %}
-            <div class="track">
-                <img src="{{ item.track.album.images[0].url if item.track.album.images else '' }}" alt="Album">
-                <div>
-                    <strong>{{ item.track.name }}</strong><br>
-                    <span style="color: #b3b3b3;">{{ item.track.artists[0].name }}</span><br>
-                    <small style="color: #1DB954;">{{ item.played_at }}</small>
+
+            <!-- Top Artistas -->
+            <div class="xl:col-span-1">
+                <div
+                    class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full hover:bg-white/8 transition-all duration-500">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2
+                            class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
+                            🎤 Tus artistas favoritos
+                        </h2>
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                    </div>
+
+                    <div
+                        class="space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-green-400/50 scrollbar-track-transparent">
+                        {% for artist in top_artists %}
+                        <div
+                            class="group flex items-center space-x-4 p-4 rounded-2xl hover:bg-white/10 transition-all duration-300 cursor-pointer">
+                            <!-- Imagen del artista -->
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ artist.images[0].url if artist.images else '/static/default-artist.png' }}"
+                                    alt="{{ artist.name }}"
+                                    class="w-16 h-16 rounded-full shadow-lg group-hover:shadow-green-400/30 transition-all duration-300">
+                                <div
+                                    class="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                                    <i
+                                        class="fas fa-music text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                                </div>
+                            </div>
+
+                            <!-- Info del artista -->
+                            <div class="flex-1 min-w-0">
+                                <h3
+                                    class="font-semibold text-white group-hover:text-green-100 transition-colors duration-300 truncate">
+                                    {{ artist.name }}
+                                </h3>
+                                <p
+                                    class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300 text-sm truncate">
+                                    {{ artist.genres|join(', ') if artist.genres else 'Artista' }}
+                                </p>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <div class="flex items-center space-x-1">
+                                        {% for i in range(5) %}
+                                        {% if (artist.popularity / 20) > i %}
+                                        <i class="fas fa-star text-green-400 text-xs"></i>
+                                        {% else %}
+                                        <i class="far fa-star text-gray-500 text-xs"></i>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <span class="text-xs text-green-400 font-medium">{{ artist.popularity }}/100</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Escuchado recientemente -->
+            <div class="xl:col-span-1">
+                <div
+                    class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full hover:bg-white/8 transition-all duration-500">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2
+                            class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+                            🕐 Escuchado recientemente
+                        </h2>
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"></div>
+                    </div>
+
+                    <div
+                        class="space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-transparent">
+                        {% for item in recent_tracks %}
+                        <div
+                            class="group flex items-center space-x-4 p-4 rounded-2xl hover:bg-white/10 transition-all duration-300 cursor-pointer">
+                            <!-- Imagen del álbum -->
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ item.track.album.images[0].url if item.track.album.images else '/static/default-album.png' }}"
+                                    alt="{{ item.track.name }}"
+                                    class="w-16 h-16 rounded-xl shadow-lg group-hover:shadow-emerald-400/30 transition-all duration-300">
+                                <div
+                                    class="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                                    <i
+                                        class="fas fa-play text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                                </div>
+                            </div>
+
+                            <!-- Info de la canción -->
+                            <div class="flex-1 min-w-0">
+                                <h3
+                                    class="font-semibold text-white group-hover:text-emerald-100 transition-colors duration-300 truncate">
+                                    {{ item.track.name }}
+                                </h3>
+                                <p
+                                    class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300 truncate">
+                                    {{ item.track.artists[0].name }}
+                                </p>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <i class="fas fa-clock text-emerald-400 text-xs"></i>
+                                    <span class="text-xs text-emerald-400 font-medium">{{ item.played_at }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div style="text-align: center; margin-top: 40px;">
-            <a href="/" class="btn">← Volver al inicio</a>
+
+        <!-- Botón de navegación -->
+        <div class="text-center mt-12">
+            <a href="/"
+                class="group inline-flex items-center gap-3 bg-gradient-to-r from-spotify-green to-green-500 hover:from-green-500 hover:to-emerald-500 text-white font-bold px-8 py-4 rounded-full shadow-xl shadow-spotify-green/30 hover:shadow-green-500/40 transform hover:scale-105 transition-all duration-300">
+                <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform duration-300"></i>
+                Volver al inicio
+            </a>
         </div>
     </div>
 </body>
+
 </html>

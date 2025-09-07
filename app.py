@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24) # Para manejar las sesiones de forma segura.
 
 # Configuración de Spotify
-SCOPE = SCOPE = "user-top-read user-read-recently-played user-read-email"
+SCOPE = SCOPE = "user-top-read user-read-recently-played user-read-email user-follow-read"
 
 def create_spotify_oauth():
     return SpotifyOAuth(
@@ -86,11 +86,15 @@ def profile():
         # Obtener canciones recientes
         recent_tracks = sp.current_user_recently_played(limit=10)
 
+        # Obtener artistas que sigue el usuario
+        following_artists = sp.current_user_followed_artists(limit=10)
+
         return render_template('profile.html',
                                user=user_info,
                                top_tracks=top_tracks['items'],
                                top_artists=top_artists['items'],
-                               recent_tracks=recent_tracks['items'])
+                               recent_tracks=recent_tracks['items'],
+                               following_artists=following_artists['artists']['items'])
 
     except Exception as e:
         return f"Error al obtener datos: {str(e)}"

@@ -4,134 +4,279 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estadísticas detalladas - {{ time_range_name }}</title>
-    <style>
-        body { 
-            font-family: 'Arial', sans-serif; 
-            margin: 0; 
-            background: linear-gradient(135deg, #191414 0%, #1DB954 100%);
-            color: white; 
-            min-height: 100vh;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'spotify-green': '#1DB954',
+                        'spotify-green-light': '#1ed760',
+                        'spotify-black': '#191414',
+                        'spotify-dark': '#121212',
+                        'spotify-gray': '#282828',
+                    }
+                }
+            }
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 30px; 
-            margin-bottom: 40px;
-        }
-        .section { 
-            background-color: rgba(40, 40, 40, 0.9);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-        .genre-bar {
-            background-color: rgba(29, 185, 84, 0.3);
-            margin: 8px 0;
-            padding: 8px 12px;
-            border-radius: 20px;
-            position: relative;
-        }
-        .genre-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background-color: #1DB954;
-            border-radius: 20px;
-            z-index: -1;
-        }
-        .track, .artist { 
-            margin: 12px 0; 
-            padding: 12px; 
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-        }
-        .track img, .artist img { 
-            width: 50px; 
-            height: 50px; 
-            border-radius: 6px; 
-            margin-right: 12px;
-        }
-        h1, h2 { color: #1DB954; }
-        .nav-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .btn {
-            background-color: #1DB954;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 20px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .btn:hover { background-color: #1ed760; }
-        .btn.active { background-color: #1ed760; }
-    </style>
+    </script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📊 Estadísticas de {{ time_range_name }}</h1>
-            <p>Análisis detallado de tu música favorita</p>
-        </div>
+<body class="bg-gradient-to-br from-spotify-black via-gray-900 to-spotify-gray min-h-screen font-sans">
+    
+    <!-- Header con título dinámico -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-spotify-green/10 via-emerald-600/10 to-teal-500/10 backdrop-blur-sm border-b border-white/10">
+        <!-- Efectos decorativos de fondo -->
+        <div class="absolute inset-0 bg-gradient-to-r from-spotify-green/5 to-transparent"></div>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-spotify-green/10 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-emerald-400/10 to-transparent rounded-full blur-2xl"></div>
         
-        <div class="nav-buttons">
-            <a href="/stats/short_term" class="btn {% if time_range == 'short_term' %}active{% endif %}">4 semanas</a>
-            <a href="/stats/medium_term" class="btn {% if time_range == 'medium_term' %}active{% endif %}">6 meses</a>
-            <a href="/stats/long_term" class="btn {% if time_range == 'long_term' %}active{% endif %}">Histórico</a>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="section">
-                <h2>🎵 Top 10 Canciones</h2>
-                {% for track in top_tracks[:10] %}
-                <div class="track">
-                    <img src="{{ track.album.images[-1].url if track.album.images else '' }}" alt="Album">
-                    <div>
-                        <strong>{{ loop.index }}. {{ track.name }}</strong><br>
-                        <small style="color: #b3b3b3;">{{ track.artists[0].name }}</small>
-                    </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 py-12">
+            <div class="text-center space-y-6">
+                <!-- Icono principal -->
+                <div class="w-20 h-20 bg-gradient-to-br from-spotify-green via-emerald-500 to-teal-500 rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-spotify-green/30 transform hover:rotate-6 transition-transform duration-500">
+                    <i class="fas fa-chart-bar text-3xl text-white"></i>
                 </div>
-                {% endfor %}
-            </div>
-            
-            <div class="section">
-                <h2>🎤 Top 10 Artistas</h2>
-                {% for artist in top_artists[:10] %}
-                <div class="artist">
-                    <img src="{{ artist.images[-1].url if artist.images else '' }}" alt="Artist">
-                    <div>
-                        <strong>{{ loop.index }}. {{ artist.name }}</strong><br>
-                        <small style="color: #1DB954;">{{ artist.popularity }}/100</small>
-                    </div>
+                
+                <!-- Título principal -->
+                <div>
+                    <h1 class="p-4 text-5xl md:text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-green-100 to-spotify-green">
+                        📊 Estadísticas de {{ time_range_name }}
+                    </h1>
+                    <p class="text-xl md:text-2xl text-green-100 font-light mt-4">
+                        Análisis detallado de tu música favorita
+                    </p>
+                    <div class="w-32 h-1 bg-gradient-to-r from-transparent via-spotify-green to-transparent mx-auto mt-6 rounded-full"></div>
                 </div>
-                {% endfor %}
             </div>
-            
-            <div class="section">
-                <h2>🎼 Tus géneros favoritos</h2>
-                {% for genre, count in top_genres %}
-                <div class="genre-bar">
-                    <div class="genre-fill" style="width: {{ (count / top_genres[0][1] * 100) if top_genres else 0 }}%;"></div>
-                    <strong>{{ genre.title() }}</strong> <span style="float: right;">{{ count }}</span>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <div style="text-align: center;">
-            <a href="/profile" class="btn">← Volver al resumen</a>
-            <a href="/logout" class="btn" style="background-color: #e22134;">🚪 Cerrar sesión</a>
         </div>
     </div>
+
+    <!-- Navegación de períodos -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <h2 class="text-lg font-medium text-gray-300 mb-4 sm:mb-0 sm:mr-4">Cambiar período:</h2>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="/stats/short_term" 
+                   class="{% if time_range == 'short_term' %}bg-spotify-green text-white shadow-lg shadow-spotify-green/30{% else %}bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10{% endif %} px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-calendar-week mr-2"></i>
+                    4 semanas
+                </a>
+                <a href="/stats/medium_term" 
+                   class="{% if time_range == 'medium_term' %}bg-spotify-green text-white shadow-lg shadow-spotify-green/30{% else %}bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10{% endif %} px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-calendar-alt mr-2"></i>
+                    6 meses
+                </a>
+                <a href="/stats/long_term" 
+                   class="{% if time_range == 'long_term' %}bg-spotify-green text-white shadow-lg shadow-spotify-green/30{% else %}bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10{% endif %} px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-history mr-2"></i>
+                    Histórico
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal - Grid de estadísticas -->
+    <div class="max-w-7xl mx-auto px-6 pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+            
+            <!-- Top 10 Canciones -->
+            <div class="lg:col-span-1 xl:col-span-1">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full hover:bg-white/8 transition-all duration-500 group">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-spotify-green to-green-400 flex items-center gap-3">
+                            🎵 Top 10 Canciones
+                        </h2>
+                        <div class="w-3 h-3 bg-spotify-green rounded-full animate-pulse group-hover:animate-bounce transition-all duration-300"></div>
+                    </div>
+                    
+                    <div class="space-y-3 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-spotify-green/50 scrollbar-track-transparent">
+                        {% for track in top_tracks[:10] %}
+                        <div class="group/item flex items-center space-x-4 p-4 rounded-2xl hover:bg-white/10 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                            <!-- Número de ranking -->
+                            <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-spotify-green to-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                {{ loop.index }}
+                            </div>
+                            
+                            <!-- Imagen del álbum -->
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ track.album.images[-1].url if track.album.images else '/static/default-album.png' }}" 
+                                     alt="{{ track.name }}"
+                                     class="w-14 h-14 rounded-xl shadow-lg group-hover/item:shadow-spotify-green/30 transition-all duration-300">
+                                <div class="absolute inset-0 rounded-xl bg-black/0 group-hover/item:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                                    <i class="fas fa-play text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 text-sm"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Info de la canción -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-white group-hover/item:text-green-100 transition-colors duration-300 truncate text-sm">
+                                    {{ track.name }}
+                                </h3>
+                                <p class="text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300 truncate text-xs">
+                                    {{ track.artists[0].name }}
+                                </p>
+                            </div>
+                            
+                            <!-- Efecto de hover -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-spotify-green/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top 10 Artistas -->
+            <div class="lg:col-span-1 xl:col-span-1">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full hover:bg-white/8 transition-all duration-500 group">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center gap-3">
+                            🎤 Top 10 Artistas
+                        </h2>
+                        <div class="w-3 h-3 bg-emerald-400 rounded-full animate-ping group-hover:animate-bounce transition-all duration-300"></div>
+                    </div>
+                    
+                    <div class="space-y-3 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-transparent">
+                        {% for artist in top_artists[:10] %}
+                        <div class="group/item flex items-center space-x-4 p-4 rounded-2xl hover:bg-white/10 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                            <!-- Número de ranking -->
+                            <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                {{ loop.index }}
+                            </div>
+                            
+                            <!-- Imagen del artista -->
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ artist.images[-1].url if artist.images else '/static/default-artist.png' }}" 
+                                     alt="{{ artist.name }}"
+                                     class="w-14 h-14 rounded-full shadow-lg group-hover/item:shadow-emerald-400/30 transition-all duration-300">
+                                <div class="absolute inset-0 rounded-full bg-black/0 group-hover/item:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                                    <i class="fas fa-music text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 text-sm"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Info del artista -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-semibold text-white group-hover/item:text-emerald-100 transition-colors duration-300 truncate text-sm">
+                                    {{ artist.name }}
+                                </h3>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <span class="text-xs px-2 py-1 bg-emerald-400/20 text-emerald-300 rounded-full">
+                                        {{ artist.popularity }}/100
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Efecto de hover -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Géneros Favoritos -->
+            <div class="lg:col-span-2 xl:col-span-1">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full hover:bg-white/8 transition-all duration-500 group">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 flex items-center gap-3">
+                            🎼 Tus géneros favoritos
+                        </h2>
+                        <div class="w-3 h-3 bg-purple-400 rounded-full animate-bounce group-hover:animate-pulse transition-all duration-300"></div>
+                    </div>
+                    
+                    <div class="space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-400/50 scrollbar-track-transparent">
+                        {% for genre, count in top_genres %}
+                        {% set percentage = (count / top_genres[0][1] * 100) if top_genres else 0 %}
+                        <div class="group/genre relative">
+                            <!-- Barra de género -->
+                            <div class="relative bg-white/10 rounded-2xl p-4 hover:bg-white/15 transition-all duration-300 cursor-pointer overflow-hidden">
+                                <!-- Fondo de la barra -->
+                                <div class="absolute inset-0 rounded-2xl">
+                                    <div class="h-full bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-purple-500/20 rounded-2xl transform scale-x-0 group-hover/genre:scale-x-100 transition-transform duration-500 origin-left"></div>
+                                </div>
+                                
+                                <!-- Barra de progreso -->
+                                <div class="absolute inset-0 rounded-2xl overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 transition-all duration-1000 ease-out rounded-2xl" 
+                                         style="width: {{ percentage }}%"></div>
+                                </div>
+                                
+                                <!-- Contenido de la barra -->
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-music text-white text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-white group-hover/genre:text-purple-100 transition-colors duration-300 capitalize">
+                                                {{ genre }}
+                                            </h3>
+                                            <div class="flex items-center space-x-2">
+                                                <div class="w-12 bg-white/20 rounded-full h-1.5">
+                                                    <div class="bg-gradient-to-r from-purple-400 to-pink-400 h-1.5 rounded-full transition-all duration-1000" 
+                                                         style="width: {{ percentage }}%"></div>
+                                                </div>
+                                                <span class="text-xs text-purple-300 font-medium">{{ percentage|round(1) }}%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-right">
+                                        <span class="text-2xl font-bold text-white group-hover/genre:text-purple-100 transition-colors duration-300">
+                                            {{ count }}
+                                        </span>
+                                        <p class="text-xs text-gray-400 group-hover/genre:text-gray-300 transition-colors duration-300">
+                                            canciones
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botones de navegación -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mt-16 pt-8 border-t border-white/10">
+            <a href="/profile" 
+               class="group inline-flex items-center gap-3 bg-gradient-to-r from-spotify-green to-green-500 hover:from-green-500 hover:to-emerald-500 text-white font-bold px-8 py-4 rounded-full shadow-xl shadow-spotify-green/30 hover:shadow-green-500/40 transform hover:scale-105 transition-all duration-300">
+                <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform duration-300"></i>
+                Volver al resumen
+            </a>
+            
+            <a href="/logout" 
+               class="group inline-flex items-center gap-3 bg-gradient-to-r from-red-600/20 to-red-500/20 hover:from-red-600/30 hover:to-red-500/30 border border-red-500/30 hover:border-red-500/50 text-red-300 hover:text-red-200 font-medium px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-sign-out-alt group-hover:translate-x-1 transition-transform duration-300"></i>
+                Cerrar sesión
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Animación de las barras de progreso cuando se cargan
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBars = document.querySelectorAll('[style*="width:"]');
+            progressBars.forEach((bar, index) => {
+                const finalWidth = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = finalWidth;
+                }, index * 100 + 500);
+            });
+        });
+
+        // Efecto de hover mejorado para las cards
+        document.querySelectorAll('.group\\/genre').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
 </body>
 </html>
