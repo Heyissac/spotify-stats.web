@@ -138,9 +138,31 @@ def stats_by_time(time_range):
 
 @app.route('/logout')
 def logout():
-    # Cerrar sesión
+    # Obtener token antes de limpiar la sesión (corregido el typo)
+    token_info = session.get('token_info', None)
+
+    # Limpiar toda la sesión de Flask
     session.clear()
-    return redirect(url_for('index'))
+
+    # Revocar el token de Spotify (desconexión segura)
+    if token_info:
+        try:
+            # Usar tu función existente
+            auth_manager = create_spotify_oauth()
+            
+            # Invalidar el token en caché
+            if hasattr(auth_manager, 'cache_handler'):
+                auth_manager.cache_handler.clear_cache()
+        except Exception as e:
+            print(f"Error al revocar el token: {e}")
+
+    # Redirigir a la página de inicio
+    response = redirect(url_for('index'))
+
+    # Limpiar cookies relacionadas con la sesión
+    response.set_cookie('session', '', expires=0)
+
+    return response
 
 # Ruta de prueba para credenciales (SIN mostra el secret)
 '''@app.route('/test')

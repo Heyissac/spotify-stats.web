@@ -47,7 +47,7 @@
             style="background-image: radial-gradient(circle, rgba(29, 185, 84, 0.3) 1px, transparent 1px); background-size: 30px 30px;">
         </div>
 
-        <div class="relative z-10 max-w-7xl mx-auto px-6 py-16">
+        <div class="relative z-10 max-w-6xl mx-auto px-6 py-16">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
 
                 <!-- Sección izquierda: Avatar y nombre -->
@@ -167,36 +167,235 @@
 
     <!-- Navegación de períodos -->
     <div class="max-w-7xl mx-auto px-6 py-8">
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <h2 class="text-xl font-semibold text-gray-300 mb-4 sm:mb-0">Explora por periodo:</h2>
-            <div class="flex flex-wrap justify-center gap-3">
-                <a href="/stats/short_term"
-                    class="group bg-white/5 hover:bg-spotify-green/20 border border-white/10 hover:border-spotify-green/50 rounded-full px-6 py-3 text-white hover:text-green-100 font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-spotify-green/20">
-                    <i class="fas fa-calendar-day mr-2 group-hover:text-spotify-green"></i>
-                    Últimas 4 semanas
-                </a>
-                <a href="/stats/medium_term"
-                    class="group bg-white/5 hover:bg-spotify-green/20 border border-white/10 hover:border-spotify-green/50 rounded-full px-6 py-3 text-white hover:text-green-100 font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-spotify-green/20">
-                    <i class="fas fa-calendar-alt mr-2 group-hover:text-spotify-green"></i>
-                    Últimos 6 meses
-                </a>
-                <a href="/stats/long_term"
-                    class="group bg-white/5 hover:bg-spotify-green/20 border border-white/10 hover:border-spotify-green/50 rounded-full px-6 py-3 text-white hover:text-green-100 font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-spotify-green/20">
-                    <i class="fas fa-history mr-2 group-hover:text-spotify-green"></i>
-                    Histórico completo
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-spotify-green to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-spotify-green/30">
+                    <i class="fas fa-clock text-white text-lg"></i>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-300">Periodo de tiempo:</h2>
+            </div>
+
+            <!-- Dropdown personalizado -->
+            <div class="relative group">
+                <button id="period-dropdown-btn"
+                    class="flex items-center justify-between gap-4 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl border border-white/20 hover:border-spotify-green/50 rounded-2xl px-6 py-3.5 text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-spotify-green/20 min-w-[280px]">
+                    <div class="flex items-center gap-3">
+                        <i id="current-period-icon" class="fas fa-calendar-day text-spotify-green text-lg"></i>
+                        <span id="current-period-text" class="text-base">Últimas 4 semanas</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-spotify-green transition-transform duration-300"
+                        id="dropdown-arrow"></i>
+                </button>
+
+                <!-- Menú desplegable -->
+                <div id="period-dropdown-menu"
+                    class="absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-spotify-gray to-gray-900 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden opacity-0 invisible transform scale-95 transition-all duration-300 z-50">
+
+                    <div class="p-2">
+                        <!-- Opción: Últimas 4 semanas -->
+                        <a href="/stats/short_term" data-period="short_term" data-icon="fa-calendar-day"
+                            data-text="Últimas 4 semanas"
+                            class="period-option flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-spotify-green/20 transition-all duration-200 group/item">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-spotify-green/20 to-emerald-500/20 rounded-lg flex items-center justify-center group-hover/item:bg-spotify-green/30 transition-all duration-200">
+                                <i class="fas fa-calendar-day text-spotify-green text-lg"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p
+                                    class="text-white font-semibold group-hover/item:text-spotify-green transition-colors">
+                                    Últimas 4 semanas</p>
+                                <p class="text-xs text-gray-400">Tus hits más recientes</p>
+                            </div>
+                            <i
+                                class="fas fa-check text-spotify-green opacity-0 group-hover/item:opacity-100 transition-opacity"></i>
+                        </a>
+
+                        <!-- Separador -->
+                        <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-2"></div>
+
+                        <!-- Opción: Últimos 6 meses -->
+                        <a href="/stats/medium_term" data-period="medium_term" data-icon="fa-calendar-alt"
+                            data-text="Últimos 6 meses"
+                            class="period-option flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-emerald-500/20 transition-all duration-200 group/item">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-all duration-200">
+                                <i class="fas fa-calendar-alt text-emerald-400 text-lg"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white font-semibold group-hover/item:text-emerald-400 transition-colors">
+                                    Últimos 6 meses</p>
+                                <p class="text-xs text-gray-400">Tu evolución musical</p>
+                            </div>
+                            <i
+                                class="fas fa-check text-emerald-400 opacity-0 group-hover/item:opacity-100 transition-opacity"></i>
+                        </a>
+
+                        <!-- Separador -->
+                        <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-2"></div>
+
+                        <!-- Opción: Histórico completo -->
+                        <a href="/stats/long_term" data-period="long_term" data-icon="fa-history"
+                            data-text="Histórico completo"
+                            class="period-option flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-teal-500/20 transition-all duration-200 group/item">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-teal-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center group-hover/item:bg-teal-500/30 transition-all duration-200">
+                                <i class="fas fa-history text-teal-400 text-lg"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white font-semibold group-hover/item:text-teal-400 transition-colors">
+                                    Histórico completo</p>
+                                <p class="text-xs text-gray-400">Toda tu trayectoria</p>
+                            </div>
+                            <i
+                                class="fas fa-check text-teal-400 opacity-0 group-hover/item:opacity-100 transition-opacity"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdownBtn = document.getElementById('period-dropdown-btn');
+            const dropdownMenu = document.getElementById('period-dropdown-menu');
+            const dropdownArrow = document.getElementById('dropdown-arrow');
+            const currentPeriodIcon = document.getElementById('current-period-icon');
+            const currentPeriodText = document.getElementById('current-period-text');
+
+            let isOpen = false;
+
+            // Toggle dropdown
+            dropdownBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                isOpen = !isOpen;
+
+                if (isOpen) {
+                    dropdownMenu.classList.remove('opacity-0', 'invisible', 'scale-95');
+                    dropdownMenu.classList.add('opacity-100', 'visible', 'scale-100');
+                    dropdownArrow.style.transform = 'rotate(180deg)';
+                } else {
+                    dropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+                    dropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+                    dropdownArrow.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Cerrar al hacer click fuera
+            document.addEventListener('click', function (e) {
+                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+                    dropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+                    dropdownArrow.style.transform = 'rotate(0deg)';
+                    isOpen = false;
+                }
+            });
+
+            // Detectar periodo actual desde la URL y actualizar el botón
+            const currentPath = window.location.pathname;
+            const periodOptions = document.querySelectorAll('.period-option');
+
+            periodOptions.forEach(option => {
+                const period = option.getAttribute('data-period');
+                if (currentPath.includes(period)) {
+                    const icon = option.getAttribute('data-icon');
+                    const text = option.getAttribute('data-text');
+                    currentPeriodIcon.className = `fas ${icon} text-spotify-green text-lg`;
+                    currentPeriodText.textContent = text;
+
+                    // Marcar como activo
+                    option.classList.add('bg-spotify-green/10');
+                    option.querySelector('.fa-check').classList.remove('opacity-0');
+                    option.querySelector('.fa-check').classList.add('opacity-100');
+                }
+            });
+        });
+    </script>
+
+    <!-- Navbar flotante superior -->
+    <nav id="floating-navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo/Título (opcional) -->
+                <div class="flex items-center gap-3 opacity-0 transition-opacity duration-300" id="navbar-brand">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-spotify-green to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-music text-white text-lg"></i>
+                    </div>
+                    <span class="text-white font-bold text-lg hidden sm:block">Spotify Stats</span>
+                </div>
+
+                <!-- Botón de logout expandible -->
+                <a href="/logout" id="logout-btn"
+                    class="group relative flex items-center justify-center bg-gradient-to-br from-red-600/20 to-red-500/20 hover:from-red-600/30 hover:to-red-500/30 backdrop-blur-xl border border-red-500/30 hover:border-red-500/50 rounded-full transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-red-500/30 overflow-hidden"
+                    style="width: 48px; height: 48px;">
+
+                    <!-- Icono de puerta -->
+                    <div
+                        class="absolute flex items-center justify-center transition-all duration-500 group-hover:translate-x-[-40px]">
+                        <i
+                            class="fas fa-door-open text-red-300 group-hover:text-red-200 text-xl transition-colors duration-300"></i>
+                    </div>
+
+                    <!-- Texto que aparece -->
+                    <span
+                        class="absolute whitespace-nowrap text-red-300 group-hover:text-red-200 font-semibold text-sm opacity-0 translate-x-8 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500 pl-4">
+                        Cerrar sesión
+                    </span>
                 </a>
             </div>
         </div>
 
-        <!-- Botón de logout -->
-        <div class="flex justify-center mb-12">
-            <a href="/logout"
-                class="group bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 hover:border-red-500/50 rounded-full px-6 py-3 text-red-300 hover:text-red-200 font-medium transition-all duration-300 transform hover:scale-105">
-                <i class="fas fa-sign-out-alt mr-2"></i>
-                Cerrar sesión
-            </a>
+        <!-- Fondo blur que aparece al hacer scroll -->
+        <div id="navbar-bg"
+            class="absolute inset-0 bg-gradient-to-r from-spotify-black/80 via-spotify-gray/80 to-gray-900/80 backdrop-blur-xl border-b border-white/10 opacity-0 transition-opacity duration-300 -z-10">
         </div>
-    </div>
+    </nav>
+
+    <script>
+        // Script para el navbar flotante
+        document.addEventListener('DOMContentLoaded', function () {
+            const navbar = document.getElementById('floating-navbar');
+            const navbarBg = document.getElementById('navbar-bg');
+            const navbarBrand = document.getElementById('navbar-brand');
+            const logoutBtn = document.getElementById('logout-btn');
+            let lastScroll = 0;
+
+            window.addEventListener('scroll', function () {
+                const currentScroll = window.pageYOffset;
+
+                if (currentScroll > 100) {
+                    // Mostrar fondo y logo cuando se hace scroll
+                    navbarBg.style.opacity = '1';
+                    navbarBrand.style.opacity = '1';
+                    navbar.style.transform = 'translateY(0)';
+                } else {
+                    // Ocultar fondo cuando está en el top
+                    navbarBg.style.opacity = '0';
+                    navbarBrand.style.opacity = '0';
+                }
+
+                lastScroll = currentScroll;
+            });
+
+            // Expandir el botón al hacer hover
+            logoutBtn.addEventListener('mouseenter', function () {
+                this.style.width = '160px';
+            });
+
+            logoutBtn.addEventListener('mouseleave', function () {
+                this.style.width = '48px';
+            });
+
+            // Confirmación antes de cerrar sesión
+            logoutBtn.addEventListener('click', function (e) {
+                if (!confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 
     <!-- Contenido principal -->
     <div class="max-w-6xl mx-auto px-6 pb-12">
