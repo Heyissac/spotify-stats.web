@@ -20,7 +20,8 @@ def create_spotify_oauth():
         client_id=os.getenv('SPOTIPY_CLIENT_ID'),
         client_secret=os.getenv('SPOTIPY_CLIENT_SECRET'),
         redirect_uri=os.getenv('SPOTIPY_REDIRECT_URI'),
-        scope=SCOPE
+        scope=SCOPE,
+        show_dialog=True # Forzar el diálogo de selección/consetimiento
     )
 
 def get_spotify_client():
@@ -55,11 +56,9 @@ def login():
 def callback():
     auth_manager = create_spotify_oauth()
 
-    # Obtener el código de autorización
-    code = request.args.get('code')
+    code = request.args.get('code') # Obtener el código de autorización
     if code:
-        # Intercambiar el código por un token
-        token_info = auth_manager.get_access_token(code)
+        token_info = auth_manager.get_access_token(code) # Intercambiar el código por un token
         session['token_info'] = token_info
         return redirect(url_for('profile'))
     
@@ -68,8 +67,7 @@ def callback():
 # Ruta del perfil (donde mostraré las estadísticas)
 @app.route('/profile')
 def profile():
-    # Verificar autenticación
-    sp = get_spotify_client()
+    sp = get_spotify_client() # Verificar autenticación
     if not sp:
         return redirect(url_for('login'))
     
@@ -95,7 +93,6 @@ def profile():
                                top_artists=top_artists['items'],
                                recent_tracks=recent_tracks['items'],
                                following_artists=following_artists['artists']['items'])
-
     except Exception as e:
         return f"Error al obtener datos: {str(e)}"
 
@@ -138,30 +135,33 @@ def stats_by_time(time_range):
 
 @app.route('/logout')
 def logout():
-    # Obtener token antes de limpiar la sesión (corregido el typo)
-    token_info = session.get('token_info', None)
+    # Obtener token antes de limpiar la sesión
+    token_info = session.get('token_info')
 
-    # Limpiar toda la sesión de Flask
-    session.clear()
+    # Limpiar la clave del token
+    session.pop('token_info', None)
+    session.clear() # Limpiar toda la sesión de Flask
 
-    # Revocar el token de Spotify (desconexión segura)
-    if token_info:
-        try:
-            # Usar tu función existente
-            auth_manager = create_spotify_oauth()
-            
-            # Invalidar el token en caché
-            if hasattr(auth_manager, 'cache_handler'):
-                auth_manager.cache_handler.clear_cache()
-        except Exception as e:
-            print(f"Error al revocar el token: {e}")
+    # Intento de limpiar cache de spotipy
+    try:
+        auth_manager = create_spotify_oauth()
+        cache_handler = getattr(auth_manager, 'cache_handler', None)
+        if cache_handler:
+            if hasattr(cache_handler, 'delete'):
+                cache_handler
+            elif hasattr(cache_handler, 'clear_cache'):
+                cache_handler.clear_cache()
+            elif hasattr(cache_handler, 'cache_path'):
+                try:
+                    os.remove(cache_handler.cache_path)
+                except Exception:
+                    pass
+    except Exception as e:
+        print(f"Error limpiando cache de spotipy: {e}")
 
-    # Redirigir a la página de inicio
+    # Redirigir al index; limpiar cookies de la sesión
     response = redirect(url_for('index'))
-
-    # Limpiar cookies relacionadas con la sesión
     response.set_cookie('session', '', expires=0)
-
     return response
 
 # Ruta de prueba para credenciales (SIN mostra el secret)

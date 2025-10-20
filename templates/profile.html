@@ -326,24 +326,46 @@
                     <span class="text-white font-bold text-lg hidden sm:block">Spotify Stats</span>
                 </div>
 
-                <!-- Botón de logout expandible -->
-                <a href="/logout" id="logout-btn"
-                    class="group relative flex items-center justify-center bg-gradient-to-br from-red-600/20 to-red-500/20 hover:from-red-600/30 hover:to-red-500/30 backdrop-blur-xl border border-red-500/30 hover:border-red-500/50 rounded-full transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-red-500/30 overflow-hidden"
-                    style="width: 48px; height: 48px;">
+                <!-- Botones de navegación -->
+                <div class="flex items-center gap-3">
+                    <!-- Botón de volver al inicio -->
+                    <a href="/" id="home-btn"
+                        class="group relative flex items-center justify-center gap-0 hover:gap-4 bg-gradient-to-br from-spotify-green/20 to-emerald-500/20 hover:from-spotify-green/30 hover:to-emerald-500/30 backdrop-blur-xl border border-spotify-green/30 hover:border-spotify-green/50 rounded-full transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-spotify-green/30 overflow-hidden"
+                        style="width: 48px; height: 48px;">
 
-                    <!-- Icono de puerta -->
-                    <div
-                        class="absolute flex items-center justify-center transition-all duration-500 group-hover:translate-x-[-40px]">
-                        <i
-                            class="fas fa-door-open text-red-300 group-hover:text-red-200 text-xl transition-colors duration-300"></i>
-                    </div>
+                        <!-- Icono de home -->
+                        <div
+                            class="absolute flex items-center justify-center transition-all duration-500 group-hover:translate-x-[-40px]">
+                            <i
+                                class="fas fa-home text-spotify-green group-hover:text-green-400 text-xl transition-colors duration-300"></i>
+                        </div>
 
-                    <!-- Texto que aparece -->
-                    <span
-                        class="absolute whitespace-nowrap text-red-300 group-hover:text-red-200 font-semibold text-sm opacity-0 translate-x-8 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500 pl-4">
-                        Cerrar sesión
-                    </span>
-                </a>
+                        <!-- Texto que aparece -->
+                        <span
+                            class="absolute whitespace-nowrap text-spotify-green group-hover:text-green-400 font-semibold text-sm opacity-0 translate-x-8 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500">
+                            Volver al inicio
+                        </span>
+                    </a>
+
+                    <!-- Botón de logout expandible -->
+                    <a href="/logout" id="logout-btn"
+                        class="group relative flex items-center justify-center bg-gradient-to-br from-red-600/20 to-red-500/20 hover:from-red-600/30 hover:to-red-500/30 backdrop-blur-xl border border-red-500/30 hover:border-red-500/50 rounded-full transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-red-500/30 overflow-hidden"
+                        style="width: 48px; height: 48px;">
+
+                        <!-- Icono de puerta -->
+                        <div
+                            class="absolute flex items-center justify-center transition-all duration-500 group-hover:translate-x-[-40px]">
+                            <i
+                                class="fas fa-door-open text-red-300 group-hover:text-red-200 text-xl transition-colors duration-300"></i>
+                        </div>
+
+                        <!-- Texto que aparece -->
+                        <span
+                            class="absolute whitespace-nowrap text-red-300 group-hover:text-red-200 font-semibold text-sm opacity-0 translate-x-8 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500">
+                            Cerrar sesión
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -360,18 +382,17 @@
             const navbarBg = document.getElementById('navbar-bg');
             const navbarBrand = document.getElementById('navbar-brand');
             const logoutBtn = document.getElementById('logout-btn');
+            const homeBtn = document.getElementById('home-btn');
             let lastScroll = 0;
 
             window.addEventListener('scroll', function () {
                 const currentScroll = window.pageYOffset;
 
                 if (currentScroll > 100) {
-                    // Mostrar fondo y logo cuando se hace scroll
                     navbarBg.style.opacity = '1';
                     navbarBrand.style.opacity = '1';
                     navbar.style.transform = 'translateY(0)';
                 } else {
-                    // Ocultar fondo cuando está en el top
                     navbarBg.style.opacity = '0';
                     navbarBrand.style.opacity = '0';
                 }
@@ -379,7 +400,16 @@
                 lastScroll = currentScroll;
             });
 
-            // Expandir el botón al hacer hover
+            // Expandir el botón de home al hacer hover (hacia la izquierda)
+            homeBtn.addEventListener('mouseenter', function () {
+                this.style.width = '160px';
+            });
+
+            homeBtn.addEventListener('mouseleave', function () {
+                this.style.width = '48px';
+            });
+
+            // Expandir el botón de logout al hacer hover (hacia la derecha)
             logoutBtn.addEventListener('mouseenter', function () {
                 this.style.width = '160px';
             });
