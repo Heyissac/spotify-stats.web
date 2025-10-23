@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
+from spotipy.oauth2 import SpotifyClientCredentials
 
 # Cargar variables de entorno (archivo .env)
 load_dotenv()
@@ -39,10 +40,77 @@ def get_spotify_client():
 
     return spotipy.Spotify(auth=token_info['access_token'])
 
+def get_top_global_albums(limit=15):    
+    try:
+        # Crear cliente con Client Credentials
+        auth_manager = SpotifyClientCredentials(
+            client_id=os.getenv('SPOTIPY_CLIENT_ID'),
+            client_secret=os.getenv('SPOTIPY_CLIENT_SECRET')
+        )
+        sp = spotipy.Spotify(auth_manager=auth_manager)
+        print("✓ Cliente de Spotify creado exitosamente")
+        
+        # Lista de artistas populares
+        popular_artists = [
+            'Taylor Swift', 'Bad Bunny', 'Drake', 'The Weeknd', 
+            'Ed Sheeran', 'Ariana Grande', 'Billie Eilish', 
+            'Post Malone', 'Dua Lipa', 'Harry Styles'
+        ]
+        
+        unique_albums = []
+        albums_seen = set()
+        
+        for artist_name in popular_artists:
+            if len(unique_albums) >= limit:
+                break
+                
+            print(f"Buscando álbumes de {artist_name}...")
+            # Buscar el artista
+            results = sp.search(q=artist_name, type='artist', limit=1)
+            
+            if results['artists']['items']:
+                artist_id = results['artists']['items'][0]['id']
+                
+                # Obtener álbumes del artista
+                albums = sp.artist_albums(artist_id, album_type='album', limit=3)
+                
+                for album in albums['items']:
+                    album_id = album.get('id')
+                    
+                    if album_id and album_id not in albums_seen:
+                        albums_seen.add(album_id)
+                        
+                        album_data = {
+                            'name': album.get('name', 'Unknown Album'),
+                            'artist': album.get('artists', [{}])[0].get('name', 'Unknown Artist'),
+                            'image': album.get('images', [{}])[0].get('url') if album.get('images') else None,
+                            'url': album.get('external_urls', {}).get('spotify', '#'),
+                            'release_date': album.get('release_date', 'Unknown')
+                        }
+                        unique_albums.append(album_data)
+                        print(f"  [{len(unique_albums)}] Álbum agregado: {album_data['name']} - {album_data['artist']}")
+                        
+                        if len(unique_albums) >= limit:
+                            break
+        
+        print(f"\n✓ Total de álbumes obtenidos: {len(unique_albums)}")
+        print("=== FIN get_top_global_albums ===\n")
+        return unique_albums
+    
+    except Exception as e:
+        print(f"\n✗ ERROR al obtener álbumes: {e}")
+        print(f"Tipo de error: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
+        print("=== FIN get_top_global_albums (CON ERROR) ===\n")
+        return []
+
 # Definir ruta principal de la web
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Obtener álbumes del top Global para mostrar
+    top_albums = get_top_global_albums(limit=10)
+    return render_template('index.html', top_albums=top_albums)
 
 # Definir ruta para iniciar autenticación
 @app.route('/login')
